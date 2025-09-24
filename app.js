@@ -6,11 +6,22 @@ const cors = require("cors");
 
 const app = express();
 
-app.use(cors({
-  origin: "https://mern-backend-ojs2.onrender.com/", 
-  credentials: true                
-}));
+const allowedOrigins = [
+  "http://localhost:5173", 
+  "https://mern-frontend-451y.vercel.app" 
+];
 
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); 
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = "CORS policy: This origin is not allowed";
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true 
+}));
 
 app.use(express.json());
 app.use(cookieParser());
